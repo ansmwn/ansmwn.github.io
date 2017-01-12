@@ -1,0 +1,77 @@
+<html>
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+	<link href="styles/fonts.css" rel="stylesheet"></link>
+	<script src="js/site.js"></script>
+	<link href="styles/main.css" rel="stylesheet"></link>
+</head>
+
+<body class="c29">
+	<span id="spacer0001">
+		<script>
+			insertFrag("spacer", "spacer0001");
+		</script>
+	</span>
+    <table class="main-body">
+        <tbody>
+            <tr class="header-row" id="header0001">
+				<script>
+					insertFrag("header", "header0001");
+				</script>
+                
+				<script>
+				</script>
+            </tr>
+            <tr class="main-content">
+                <td class="left-main" colspan="1" rowspan="1">
+                    <h1 class="main-header" id="title-recent"><span class="small-text c18 bold">RECENT</span></h1>
+					<span id="content">
+					</span>
+                </td>
+                <td class="right-sidebar" colspan="1" rowspan="1" id="sidebar0001">
+					<script>
+						insertFrag("sidebar", "sidebar0001");
+					</script>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="left-main1"><span class="standard-font-weight"></span></p>
+	<script>
+		// xhr: from site.js
+		var MAX_RECENTS = 1;
+		var recents = [];
+		onLoad = function(){
+			for (var i = 0; i < pages.length; i++) {
+				var pi = pages[i];
+				if (pi.name === "index.html"){
+					continue;
+				}
+				recents.push({ts: new Date(pi.date).getTime(), pageinfo: pi});
+			}
+			recents.sort(function(a, b){
+				return -a.ts + b.ts;
+			});
+			recents.slice(0, MAX_RECENTS - 1);
+			//for(var i=0;i<recents.length;i++){
+				xhr(recents[0].pageinfo.name, function(data){
+					// we have our page data
+					if(data.indexOf("<!-- BEGIN_MAIN --" + ">") == -1 || data.indexOf("<!-- END_MAIN --" + ">") === -1) {
+						alert("search parsing error");
+					}
+					document.getElementById("title-recent").innerHTML += " &ndash; " + recents[0].pageinfo.title;
+					document.getElementById("content").innerHTML += finalize(data.substring(data.indexOf("<!-- BEGIN_MAIN --" + ">") + 19, data.indexOf("<!-- END_MAIN --" + ">")), recents[0].pageinfo.name);
+				});
+			//}
+            var s = document.createElement("script");
+            s.src="js/octahedron.min.js";
+            document.head.appendChild(s);
+		};
+		function finalize(text, filename){
+			return text + "<a href=\"" + filename + "\">Read more... &raquo;</a>";
+		}
+	</script>
+</body>
+
+</html>

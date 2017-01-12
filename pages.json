@@ -1,0 +1,19 @@
+[
+	{
+		"name": "index.html",
+		"date": "Mon Dec 05 2016",
+		"crawl": false
+	},
+	{
+		"name": "about.html",
+		"date": "Tue Dec 05 2016",
+		"crawl": true,
+		"title": "About this site"
+	},
+    {
+        "name": "mice-and-men.html",
+        "date": "Tue Oct 11 2016",
+        "crawl": true,
+        "title": "Of Mice and Men Essay"
+    }
+]

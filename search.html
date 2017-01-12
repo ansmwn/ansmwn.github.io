@@ -1,0 +1,116 @@
+<html>
+
+<head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <link href="styles/fonts.css" rel="stylesheet"></link>
+    <script src="js/site.js"></script>
+    <link href="styles/main.css" rel="stylesheet"></link>
+	<style>
+		.highlight {
+			background-color: yellow;
+		}
+	</style>
+</head>
+
+<body class="c29">
+    <span id="spacer0001">
+		<script>
+			insertFrag("spacer", "spacer0001");
+		</script>
+	</span>
+    <table class="main-body">
+        <tbody>
+            <tr class="header-row" id="header0001">
+                <script>
+                    insertFrag("header", "header0001");
+                </script>
+            </tr>
+            <tr class="main-content">
+                <td class="left-main" colspan="1" rowspan="1">
+                    <h1 class="main-header" id="title-recent"><span class="small-text c18 bold">RECENT</span></h1>
+                    <span id="content">
+					</span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="left-main1"><span class="standard-font-weight"></span></p>
+    <script>
+        function getParameterByName(name, url) {
+            if (!url) {
+                url = window.location.href;
+            }
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+		var q = getParameterByName("q").toLowerCase();
+        var matches = 0;
+		onLoad = function(){
+			for(var i=0;i<pages.length;i++){
+				var pi = pages[i];
+				if(!pi.crawl){
+					// don't crawl this page!
+					continue;
+				}
+				xhr(pi.name, function(e){
+					if(e.indexOf("<!-- BEGIN_SEARCH --" + ">") === -1 || e.indexOf("<!-- END_SEARCH --" + ">") === -1){
+						alert("error parsing data");
+					}
+					var d = e.substring(e.indexOf("<!-- BEGIN_SEARCH --" + ">") + 21, e.indexOf("<!-- END_SEARCH --" + ">"));
+					var notags = d.replace(/[ \t]{2,}/g, " ").replace(/<br>/g, "\n").replace(/<[^>]*>/g, "");
+					if(notags.indexOf(q) === -1){
+						// return. (no matches here)
+						return;
+					}
+                    matches++;
+					d = d.replace(new RegExp(q, "gi"), function($0){return "<span class='highlight'>" + $0 + "</span>"});
+					// count 50 chars of actual text and cut it off. 
+					d = cwords(d, 50 + d.indexOf("<span class='highlight'>") + 30);
+					// count the next fifty chars after the last one and truncate
+					document.getElementById("content").innerHTML += finalize(d, pi.name);
+					return;
+				});
+			}
+		};
+		function cwords(str, ct){
+			var c = 0, $s = "", t0 = false, t1 = false;
+			for(var i=0;i<str.length;i++){
+				if(c >= ct){
+					if(!str[i].match(/(\s)/)){
+						while(!str[i].match(/(\s)/)){
+							if(i > str.length){
+								return $s + " ";
+							}
+							$s += str[i++];
+						}
+					}
+					break;
+				}
+				if(str[i] == "<") t0 = true;
+					$s += str[i];
+					if(!str[i].match(/(\s)/)){
+					
+						if(!t0){
+							c++;
+						}
+					}
+				if(str[i] == ">") t0 = false;
+			}
+			return $s;
+		}
+        
+        if(matches === 0){
+            document.getElementById("content").innerHTML = "<em>No search results</em>";
+        }
+		
+		function finalize(text, filename){
+			return text + "<a href=\"" + filename + "\">Read more... &raquo;</a>";
+		}
+    </script>
+</body>
+
+</html>
